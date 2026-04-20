@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080b0f">
+<title>Coach Nutrition</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b0f;
+  --bg2: #0e1318;
+  --card: rgba(255,255,255,0.04);
+  --card-border: rgba(255,255,255,0.08);
+  --green: #00ff87;
+  --green-dim: rgba(0,255,135,0.15);
+  --green-glow: rgba(0,255,135,0.3);
+  --red: #ff4757;
+  --yellow: #ffd32a;
+  --text: #eef2f7;
+  --muted: #4a5568;
+  --muted2: #718096;
+  --display: 'Barlow Condensed', sans-serif;
+  --body: 'Barlow', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(8,11,15,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0 10px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: var(--body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-btn.active { color: var(--green); }
+.nav-btn svg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+/* PAGES */
+.page { display: none; padding: 0 0 90px; min-height: 100vh; }
+.page.active { display: block; }
+
+/* TOP PROGRESS BAR */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(8,11,15,0.92);
+  backdrop-filter: blur(20px);
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.top-bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.top-bar-title {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.top-bar-weight {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+.progress-track {
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  height: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), #00e5ff);
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 0 12px var(--green-glow);
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.65rem;
+  color: var(--muted2);
+  letter-spacing: 0.06em;
+}
+
+/* HERO SECTION */
+.hero {
+  padding: 24px 16px 8px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-lost {
+  font-family: var(--display);
+  font-size: clamp(4.5rem, 20vw, 7rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--green), #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse-num 3s ease-in-out infinite;
+}
+
+@keyframes pulse-num {
+  0%,100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+.hero-lost-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-top: 4px;
+}
+
+.hero-remaining {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,255,135,0.2);
+  border-radius: 30px;
+  padding: 8px 18px;
+}
+
+.hero-remaining span {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  color: var(--green);
+}
+
+.hero-remaining small {
+  font-size: 0.7rem;
+  color: var(--muted2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* STREAK */
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,100,0,0.12);
+  border: 1px solid rgba(255,100,0,0.25);
+  border-radius: 30px;
+  padding: 6px 14px;
+  margin-top: 12px;
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: #ff8c42;
+  animation: flicker 2s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,100% { opacity:1; } 50% { opacity:0.8; }
+}
+
+/* CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 16px 0;
+}
+
+.mini-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  backdrop-filter: blur(10px);
+}
+
+.mini-card .mc-val {
+  font-family: var(--display);
+  font-size: 1.8rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.mini-card .mc-lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted2);
+  margin-top: 4px;
+}
+
+/* WEIGHT INPUT */
+.weight-input-section {
+  padding: 16px;
+}
+
+.weight-input-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.wic-title {
+  font-family: var(--display);
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 14px;
+}
+
+.weight-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.weight-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.weight-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-dim);
+}
+
+.btn-add-weight {
+  background: var(--green);
+  color: #080b0f;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+
+.btn-add-weight:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 20px var(--green-glow);
+}
+
+/* CHART */
+.chart-section {
+  padding: 0 16px 16px;
+}
+
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.chart-title {
+  font-family: var(--display);
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.chart-tab {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  background: none;
+  color: var(--muted2);
+  cursor: pointer;
+  font-family: var(--body);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+}
+
+.chart-tab.active {
+  background: var(--green-dim);
+  border-color: rgba(0,255,135,0.3);
+  color: var(--green);
+}
+
+canvas#weightChart {
+  width: 100% !important;
+  max-height: 160px;
+}
+
+/* HISTORY */
+.history-list {
+  padding: 0 16px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.hi-date { font-size: 0.8rem; color: var(--muted2); }
+.hi-weight {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+
+.hi-delta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.hi-delta.down { background: rgba(0,255,135,0.1); color: var(--green); }
+.hi-delta.up { background: rgba(255,71,87,0.1); color: var(--red); }
+.hi-delta.same { background: rgba(255,255,255,0.05); color: var(--muted2); }
+
+.hi-actions { display: flex; gap: 6px; align-items: center; }
+
+.btn-edit, .btn-del {
+  background: none;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-edit { color: var(--muted2); }
+.btn-edit:active { background: rgba(0,255,135,0.1); border-color: rgba(0,255,135,0.3); color: var(--green); }
+.btn-del { color: var(--muted2); }
+.btn-del:active { background: rgba(255,71,87,0.1); border-color: rgba(255,71,87,0.3); color: var(--red); }
+.btn-edit svg, .btn-del svg { width: 13px; height: 13px; stroke-width: 2; }
+
+/* Edit inline input */
+.hi-edit-row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.hi-edit-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,255,135,0.3);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  outline: none;
+  width: 100px;
+  -webkit-appearance: none;
+}
+.btn-confirm {
+  background: var(--green);
+  color: #080b0f;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.btn-cancel-edit {
+  background: rgba(255,255,255,0.05);
+  color: var(--muted2);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: var(--display);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* === PLAN PAGE === */
+.plan-header {
+  padding: 20px 16px 8px;
+}
+
+.plan-header h2 {
+  font-family: var(--display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.plan-header h2 span { color: var(--green); }
+
+.plan-sub {
+  font-size: 0.78rem;
+  color: var(--muted2);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.btn-generate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: calc(100% - 32px);
+  margin: 14px 16px;
+  background: linear-gradient(135deg, var(--green), #00e5ff);
+  color: #080b0f;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.25s;
+  box-shadow: 0 4px 24px rgba(0,255,135,0.2);
+}
+
+.btn-generate:active { transform: scale(0.97); }
+.btn-generate:disabled { opacity: 0.5; }
+
+.btn-generate svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* DAY CARDS */
+.day-cards { padding: 0 16px; }
+
+.day-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.day-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.day-card-header:active { background: rgba(255,255,255,0.03); }
+
+.day-name {
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.day-kcal {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  color: var(--green);
+  letter-spacing: 0.04em;
+}
+
+.day-content {
+  display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #a0aec0;
+}
+
+.day-card.open .day-content { display: block; }
+
+.meal-block { margin-bottom: 10px; }
+.meal-block-title {
+  font-family: var(--display);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 4px;
+  margin-top: 10px;
+}
+
+.macro-row-small {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.mpill {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.mpill.p { background: rgba(251,146,60,0.15); color: #fb923c; }
+.mpill.g { background: rgba(251,191,36,0.12); color: #fbbf24; }
+.mpill.l { background: rgba(6,214,160,0.12); color: #06d6a0; }
+
+/* LOADING */
+.loading-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 32px 20px;
+  margin: 0 16px;
+  text-align: center;
+  display: none;
+}
+
+.loading-card.active { display: block; }
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0,255,135,0.1);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 0.8rem;
+  color: var(--muted2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* === COACH PAGE === */
+.coach-header {
+  padding: 20px 16px 8px;
+}
+
+.coach-header h2 {
+  font-family: var(--display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.coach-header h2 span { color: var(--green); }
+
+.chat-container {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 300px;
+}
+
+.msg {
+  max-width: 88%;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  animation: fadeup 0.3s ease;
+}
+
+@keyframes fadeup {
+  from { opacity:0; transform:translateY(8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.msg.assistant {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  color: var(--text);
+}
+
+.msg.user {
+  background: var(--green-dim);
+  border: 1px solid rgba(0,255,135,0.2);
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+  color: var(--green);
+  text-align: right;
+}
+
+.msg-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  opacity: 0.5;
+}
+
+.quick-chips {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 8px;
+}
+
+.quick-chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  white-space: nowrap;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 0.72rem;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--body);
+  flex-shrink: 0;
+}
+
+.chip:active {
+  background: var(--green-dim);
+  border-color: rgba(0,255,135,0.3);
+  color: var(--green);
+}
+
+.chat-input-bar {
+  position: sticky;
+  bottom: 68px;
+  padding: 10px 16px;
+  background: rgba(8,11,15,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.chat-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 0.88rem;
+  outline: none;
+  resize: none;
+  min-height: 44px;
+  max-height: 120px;
+  line-height: 1.4;
+  transition: border-color 0.2s;
+}
+
+.chat-input:focus { border-color: rgba(0,255,135,0.4); }
+
+.btn-send {
+  background: var(--green);
+  color: #080b0f;
+  border: none;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-send:active { transform: scale(0.92); box-shadow: 0 0 16px var(--green-glow); }
+.btn-send svg { width: 18px; height: 18px; }
+
+/* === PROFILE PAGE === */
+.profile-page { padding: 20px 16px 90px; }
+
+.profile-title {
+  font-family: var(--display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.profile-title span { color: var(--green); }
+
+.form-section {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.form-section-title {
+  font-family: var(--display);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-row.full { grid-template-columns: 1fr; }
+
+.form-group label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted2);
+  margin-bottom: 6px;
+}
+
+.form-group input, .form-group textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+.form-group input:focus { border-color: rgba(0,255,135,0.4); }
+
+.api-key-input {
+  font-family: monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.04em;
+}
+
+.btn-save {
+  width: 100%;
+  background: linear-gradient(135deg, var(--green), #00e5ff);
+  color: #080b0f;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.25s;
+  box-shadow: 0 4px 24px rgba(0,255,135,0.15);
+  margin-top: 6px;
+}
+
+.btn-save:active { transform: scale(0.97); }
+
+.api-info {
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.74rem;
+  color: #7dd3fc;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--green);
+  color: #080b0f;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-family: var(--display);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 200;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Glow dot bg effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(0,255,135,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page > * { position: relative; z-index: 1; }
+
+/* chevron */
+.chevron-icon {
+  width: 16px; height: 16px;
+  stroke: var(--muted);
+  transition: transform 0.25s;
+}
+.day-card.open .chevron-icon { transform: rotate(180deg); }
+
+/* empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted2);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.empty-state svg {
+  width: 48px; height: 48px;
+  stroke: var(--muted);
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== PAGE: DASHBOARD ========== -->
+<div class="page active" id="page-home">
+
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <span class="top-bar-title">Objectif mi-juin</span>
+      <span class="top-bar-weight" id="tb-weight">-- kg</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="prog-start">80,7 kg</span>
+      <span id="prog-pct">0%</span>
+      <span>76,5 kg</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-lost" id="hero-lost">0,0</div>
+    <div class="hero-lost-label">kg perdus depuis le début</div>
+    <div class="hero-remaining">
+      <span id="hero-remaining">4,2</span>
+      <small>kg restants</small>
+    </div>
+    <br>
+    <div class="streak-badge" id="streak-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke:#ff8c42">
+        <path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z" stroke-width="2"/>
+      </svg>
+      <span id="streak-num">0</span> jour streak
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="mini-card">
+      <div class="mc-val" id="card-current" style="color:var(--green)">--</div>
+      <div class="mc-lbl">Poids actuel</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-val" id="card-deficit" style="color:#00e5ff">~2075</div>
+      <div class="mc-lbl">Calories cible</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-val" id="card-bmi" style="color:var(--yellow)">--</div>
+      <div class="mc-lbl">IMC</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-val" id="card-days" style="color:#fb923c">--</div>
+      <div class="mc-lbl">Jours restants</div>
+    </div>
+  </div>
+
+  <div class="weight-input-section">
+    <div class="weight-input-card">
+      <div class="wic-title">Poids du jour</div>
+      <div class="weight-row">
+        <input type="number" step="0.1" min="40" max="200" class="weight-input" id="weight-input" placeholder="80.7">
+        <button class="btn-add-weight" onclick="addWeight()">Ajouter</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Courbe de poids</span>
+        <div class="chart-tabs">
+          <button class="chart-tab active" onclick="setChartRange(30,this)">30j</button>
+          <button class="chart-tab" onclick="setChartRange(90,this)">90j</button>
+          <button class="chart-tab" onclick="setChartRange(0,this)">Tout</button>
+        </div>
+      </div>
+      <canvas id="weightChart"></canvas>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 8px">
+    <div class="wic-title" style="padding-left:4px; padding-top:8px; font-family:var(--display); font-size:0.85rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted2)">Historique</div>
+  </div>
+  <div class="history-list" id="history-list">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h18v18H3z" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      <div>Aucune entrée pour l'instant<br>Commence par renseigner ton poids !</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: PLAN ========== -->
+<div class="page" id="page-plan">
+  <div class="plan-header">
+    <h2>Plan <span>Semaine</span></h2>
+    <p class="plan-sub">Généré par IA selon ton poids actuel et ton déficit calorique personnalisé.</p>
+  </div>
+
+  <button class="btn-generate" id="btn-generate" onclick="generatePlan()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v3M18.4 5.6l-2.1 2.1M21 12h-3M18.4 18.4l-2.1-2.1M12 21v-3M5.6 18.4l2.1-2.1M3 12h3M5.6 5.6l2.1 2.1"/></svg>
+    Générer mon plan semaine
+  </button>
+
+  <div class="loading-card" id="loading-plan">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Claude analyse ton profil…</div>
+  </div>
+
+  <div class="day-cards" id="day-cards">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <div>Clique sur "Générer"<br>pour obtenir ton plan semaine</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: COACH ========== -->
+<div class="page" id="page-coach">
+  <div class="coach-header">
+    <h2>Coach <span>IA</span></h2>
+  </div>
+
+  <div class="quick-chips">
+    <div class="chip" onclick="sendChip(this)">J'ai faim ce soir 😩</div>
+    <div class="chip" onclick="sendChip(this)">Remplace le poulet</div>
+    <div class="chip" onclick="sendChip(this)">Je stagne depuis 3 jours</div>
+    <div class="chip" onclick="sendChip(this)">Recette rapide &lt;500 kcal</div>
+    <div class="chip" onclick="sendChip(this)">Que manger avant séance ?</div>
+    <div class="chip" onclick="sendChip(this)">Collation coupe-faim</div>
+  </div>
+
+  <div class="chat-container" id="chat-container">
+    <div class="msg assistant">
+      <div class="msg-label">Coach IA</div>
+      Salut ! 💪 Je suis ton coach nutrition personnalisé. Je connais ton profil et ta progression. Pose-moi n'importe quelle question : repas, fringales, substitutions, plateaux…
+    </div>
+  </div>
+
+  <div style="height:80px"></div>
+
+  <div class="chat-input-bar">
+    <textarea class="chat-input" id="chat-input" placeholder="Pose ta question…" rows="1" onkeydown="handleChatKey(event)"></textarea>
+    <button class="btn-send" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== PAGE: PROFILE ========== -->
+<div class="page" id="page-profile">
+  <div class="profile-page">
+    <div class="profile-title">Mon <span>Profil</span></div>
+
+    <div class="form-section">
+      <div class="form-section-title">Mensurations</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Poids actuel (kg)</label>
+          <input type="number" step="0.1" id="p-weight" placeholder="80.7">
+        </div>
+        <div class="form-group">
+          <label>Taille (cm)</label>
+          <input type="number" id="p-height" placeholder="183">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Âge</label>
+          <input type="number" id="p-age" placeholder="22">
+        </div>
+        <div class="form-group">
+          <label>% Masse grasse</label>
+          <input type="number" step="0.5" id="p-bf" placeholder="20">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Objectif</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Poids cible (kg)</label>
+          <input type="number" step="0.1" id="p-goal" placeholder="76.5">
+        </div>
+        <div class="form-group">
+          <label>Date cible</label>
+          <input type="date" id="p-date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Poids de départ (kg)</label>
+          <input type="number" step="0.1" id="p-start" placeholder="80.7">
+        </div>
+        <div class="form-group">
+          <label>Déficit (kcal)</label>
+          <input type="number" id="p-deficit" placeholder="500">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Clé API Anthropic</div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Clé API (sk-ant-...)</label>
+          <input type="password" id="p-apikey" class="api-key-input" placeholder="sk-ant-api03-...">
+        </div>
+      </div>
+      <div class="api-info">
+        🔑 Obtiens ta clé gratuite sur <strong>console.anthropic.com</strong> → API Keys → Create Key.<br>
+        Elle est stockée uniquement sur ton appareil, jamais envoyée ailleurs.
+      </div>
+    </div>
+
+    <button class="btn-save" onclick="saveProfile()">Sauvegarder le profil</button>
+  </div>
+</div>
+
+<!-- ========== NAV ========== -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="goPage('home',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Accueil
+  </button>
+  <button class="nav-btn" onclick="goPage('plan',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><path d="M9 12h6M9 16h4"/></svg>
+    Plan
+  </button>
+  <button class="nav-btn" onclick="goPage('coach',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Coach
+  </button>
+  <button class="nav-btn" onclick="goPage('profile',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profil
+  </button>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ========== STATE ==========
+let profile = JSON.parse(localStorage.getItem('cn_profile') || 'null') || {
+  weight: 80.7, height: 183, age: 22, bf: 20,
+  goal: 76.5, startWeight: 80.7, deficit: 500,
+  targetDate: '2026-06-15', apiKey: ''
+};
+
+let weightLog = JSON.parse(localStorage.getItem('cn_weights') || '[]');
+let chatHistory = [];
+let chartInstance = null;
+let chartRange = 30;
+
+// ========== INIT ==========
+window.onload = () => {
+  loadProfile();
+  updateDashboard();
+  renderHistory();
+  renderChart();
+};
+
+// ========== NAVIGATION ==========
+function goPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'home') { updateDashboard(); renderChart(); }
+}
+
+// ========== PROFILE ==========
+function loadProfile() {
+  document.getElementById('p-weight').value = profile.weight || '';
+  document.getElementById('p-height').value = profile.height || '';
+  document.getElementById('p-age').value = profile.age || '';
+  document.getElementById('p-bf').value = profile.bf || '';
+  document.getElementById('p-goal').value = profile.goal || '';
+  document.getElementById('p-date').value = profile.targetDate || '';
+  document.getElementById('p-start').value = profile.startWeight || '';
+  document.getElementById('p-deficit').value = profile.deficit || '';
+  document.getElementById('p-apikey').value = profile.apiKey || '';
+}
+
+function saveProfile() {
+  profile.weight = parseFloat(document.getElementById('p-weight').value) || profile.weight;
+  profile.height = parseFloat(document.getElementById('p-height').value) || profile.height;
+  profile.age = parseInt(document.getElementById('p-age').value) || profile.age;
+  profile.bf = parseFloat(document.getElementById('p-bf').value) || profile.bf;
+  profile.goal = parseFloat(document.getElementById('p-goal').value) || profile.goal;
+  profile.targetDate = document.getElementById('p-date').value || profile.targetDate;
+  profile.startWeight = parseFloat(document.getElementById('p-start').value) || profile.startWeight;
+  profile.deficit = parseInt(document.getElementById('p-deficit').value) || profile.deficit;
+  profile.apiKey = document.getElementById('p-apikey').value.trim();
+  localStorage.setItem('cn_profile', JSON.stringify(profile));
+  showToast('Profil sauvegardé ✓');
+  updateDashboard();
+}
+
+// ========== DASHBOARD ==========
+function updateDashboard() {
+  const current = weightLog.length > 0 ? weightLog[weightLog.length - 1].w : profile.weight;
+  const lost = Math.max(0, profile.startWeight - current);
+  const remaining = Math.max(0, current - profile.goal);
+  const totalToLose = profile.startWeight - profile.goal;
+  const pct = totalToLose > 0 ? Math.min(100, (lost / totalToLose) * 100) : 0;
+
+  // Top bar
+  document.getElementById('tb-weight').textContent = current.toFixed(1) + ' kg';
+  document.getElementById('progress-fill').style.width = pct.toFixed(1) + '%';
+  document.getElementById('prog-pct').textContent = pct.toFixed(0) + '%';
+  document.getElementById('prog-start').textContent = profile.startWeight + ' kg';
+
+  // Hero
+  animateNumber('hero-lost', lost, 1);
+  document.getElementById('hero-remaining').textContent = remaining.toFixed(1);
+
+  // Cards
+  document.getElementById('card-current').textContent = current.toFixed(1) + ' kg';
+  const tdee = calcTDEE();
+  document.getElementById('card-deficit').textContent = (tdee - profile.deficit).toFixed(0);
+  const bmi = (current / ((profile.height / 100) ** 2)).toFixed(1);
+  document.getElementById('card-bmi').textContent = bmi;
+  const daysLeft = Math.max(0, Math.ceil((new Date(profile.targetDate) - new Date()) / 86400000));
+  document.getElementById('card-days').textContent = daysLeft + 'j';
+
+  // Streak
+  const streak = calcStreak();
+  document.getElementById('streak-num').textContent = streak;
+}
+
+function calcTDEE() {
+  const bmr = 10 * profile.weight + 6.25 * profile.height - 5 * profile.age + 5;
+  return Math.round(bmr * 1.375);
+}
+
+function calcStreak() {
+  if (!weightLog.length) return 0;
+  const sorted = [...weightLog].sort((a, b) => new Date(b.d) - new Date(a.d));
+  let streak = 0;
+  let current = new Date(); current.setHours(0,0,0,0);
+  for (const entry of sorted) {
+    const d = new Date(entry.d); d.setHours(0,0,0,0);
+    const diff = Math.round((current - d) / 86400000);
+    if (diff <= 1) { streak++; current = d; }
+    else break;
+  }
+  return streak;
+}
+
+function animateNumber(id, target, decimals) {
+  const el = document.getElementById(id);
+  const start = parseFloat(el.textContent) || 0;
+  const duration = 600;
+  const startTime = performance.now();
+  const animate = (now) => {
+    const t = Math.min(1, (now - startTime) / duration);
+    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    el.textContent = (start + (target - start) * ease).toFixed(decimals);
+    if (t < 1) requestAnimationFrame(animate);
+  };
+  requestAnimationFrame(animate);
+}
+
+// ========== WEIGHT LOG ==========
+function addWeight() {
+  const val = parseFloat(document.getElementById('weight-input').value);
+  if (!val || val < 30 || val > 300) { showToast('Poids invalide !'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  const existing = weightLog.findIndex(e => e.d === today);
+  if (existing >= 0) weightLog[existing].w = val;
+  else weightLog.push({ d: today, w: val });
+  weightLog.sort((a, b) => new Date(a.d) - new Date(b.d));
+  localStorage.setItem('cn_weights', JSON.stringify(weightLog));
+  document.getElementById('weight-input').value = '';
+  updateDashboard();
+  renderHistory();
+  renderChart();
+  showToast('Poids enregistré ✓');
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (!weightLog.length) {
+    el.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h18v18H3z"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><div>Aucune entrée pour l'instant<br>Commence par renseigner ton poids !</div></div>`;
+    return;
+  }
+  const sorted = [...weightLog].sort((a, b) => new Date(b.d) - new Date(a.d)).slice(0, 30);
+  el.innerHTML = sorted.map((entry, i) => {
+    const prev = sorted[i + 1];
+    let deltaHTML = '';
+    if (prev) {
+      const delta = entry.w - prev.w;
+      const cls = delta < 0 ? 'down' : delta > 0 ? 'up' : 'same';
+      const sign = delta > 0 ? '+' : '';
+      deltaHTML = `<span class="hi-delta ${cls}">${sign}${delta.toFixed(1)} kg</span>`;
+    }
+    const d = new Date(entry.d);
+    const label = d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
+    return `<div class="history-item" id="hi-${entry.d}">
+      <span class="hi-date">${label}</span>
+      <span class="hi-weight">${entry.w.toFixed(1)} kg</span>
+      <div class="hi-actions">
+        ${deltaHTML}
+        <button class="btn-edit" onclick="startEdit('${entry.d}', ${entry.w})" title="Modifier">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn-del" onclick="deleteWeight('${entry.d}')" title="Supprimer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startEdit(date, currentVal) {
+  const row = document.getElementById('hi-' + date);
+  if (!row) return;
+  const d = new Date(date);
+  const label = d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
+  row.outerHTML = `<div class="hi-edit-row" id="hi-${date}">
+    <span class="hi-date">${label}</span>
+    <input class="hi-edit-input" type="number" step="0.1" id="edit-input-${date}" value="${currentVal}" min="30" max="300">
+    <button class="btn-confirm" onclick="confirmEdit('${date}')">OK</button>
+    <button class="btn-cancel-edit" onclick="renderHistory()">✕</button>
+  </div>`;
+  const inp = document.getElementById('edit-input-' + date);
+  if (inp) { inp.focus(); inp.select(); }
+}
+
+function confirmEdit(date) {
+  const inp = document.getElementById('edit-input-' + date);
+  if (!inp) return;
+  const val = parseFloat(inp.value);
+  if (!val || val < 30 || val > 300) { showToast('Poids invalide !'); return; }
+  const idx = weightLog.findIndex(e => e.d === date);
+  if (idx >= 0) weightLog[idx].w = val;
+  localStorage.setItem('cn_weights', JSON.stringify(weightLog));
+  updateDashboard();
+  renderHistory();
+  renderChart();
+  showToast('Poids modifié ✓');
+}
+
+function deleteWeight(date) {
+  if (!confirm('Supprimer cette entrée ?')) return;
+  weightLog = weightLog.filter(e => e.d !== date);
+  localStorage.setItem('cn_weights', JSON.stringify(weightLog));
+  updateDashboard();
+  renderHistory();
+  renderChart();
+  showToast('Entrée supprimée');
+}
+
+// ========== CHART ==========
+function renderChart() {
+  const ctx = document.getElementById('weightChart').getContext('2d');
+  let data = [...weightLog].sort((a, b) => new Date(a.d) - new Date(b.d));
+  if (chartRange > 0) {
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - chartRange);
+    data = data.filter(e => new Date(e.d) >= cutoff);
+  }
+
+  // Add goal line point at target date
+  const goalPoint = { d: profile.targetDate, w: profile.goal };
+
+  const labels = data.map(e => {
+    const d = new Date(e.d);
+    return d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+  });
+  const weights = data.map(e => e.w);
+
+  if (chartInstance) { chartInstance.destroy(); }
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.length ? labels : ['Début'],
+      datasets: [
+        {
+          label: 'Poids',
+          data: weights.length ? weights : [profile.startWeight],
+          borderColor: '#00ff87',
+          backgroundColor: 'rgba(0,255,135,0.08)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#00ff87',
+          pointRadius: data.length > 20 ? 0 : 4,
+          pointHoverRadius: 6,
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: 'Objectif',
+          data: Array(Math.max(labels.length, 1)).fill(profile.goal),
+          borderColor: 'rgba(0,229,255,0.4)',
+          borderWidth: 1.5,
+          borderDash: [6,4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: 'rgba(14,19,24,0.95)',
+        borderColor: 'rgba(0,255,135,0.3)',
+        borderWidth: 1,
+        titleColor: '#00ff87',
+        bodyColor: '#a0aec0',
+        padding: 10,
+        callbacks: {
+          label: ctx => ' ' + ctx.raw + ' kg'
+        }
+      }},
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#4a5568', font: { size: 10 }, maxTicksLimit: 6 } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#4a5568', font: { size: 10 }, callback: v => v + ' kg' },
+          suggestedMin: profile.goal - 1,
+          suggestedMax: profile.startWeight + 0.5
+        }
+      }
+    }
+  });
+}
+
+function setChartRange(range, btn) {
+  chartRange = range;
+  document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChart();
+}
+
+// ========== PLAN GENERATION ==========
+async function generatePlan() {
+  if (!profile.apiKey) {
+    showToast('Ajoute ta clé API dans Profil !');
+    goPage('profile', document.querySelectorAll('.nav-btn')[3]);
+    return;
+  }
+  const btn = document.getElementById('btn-generate');
+  const loading = document.getElementById('loading-plan');
+  const cards = document.getElementById('day-cards');
+  btn.disabled = true;
+  loading.classList.add('active');
+  cards.innerHTML = '';
+
+  const current = weightLog.length > 0 ? weightLog[weightLog.length - 1].w : profile.weight;
+  const tdee = calcTDEE();
+  const target = tdee - profile.deficit;
+
+  const prompt = `Tu es un coach nutrition expert. Génère un plan alimentaire pour 7 jours (Lundi à Dimanche) pour ce profil :
+- Homme, ${profile.age} ans, ${profile.height}cm, ${current}kg, ${profile.bf}% masse grasse
+- TDEE : ${tdee} kcal, cible calorique : ${target} kcal/jour (déficit ${profile.deficit} kcal)
+- Objectif : passer de ${current}kg à ${profile.goal}kg, préserver le muscle
+- Protéines : minimum 2g/kg soit ${Math.round(current * 2)}g/jour
+
+Pour chaque jour, donne exactement ce format JSON (réponds UNIQUEMENT en JSON, pas de markdown) :
+{
+  "days": [
+    {
+      "name": "Lundi",
+      "kcal": 2080,
+      "p": 165,
+      "g": 190,
+      "l": 55,
+      "meals": {
+        "petit_dejeuner": "Description détaillée avec quantités",
+        "dejeuner": "Description détaillée avec quantités",
+        "collation": "Description détaillée avec quantités",
+        "diner": "Description détaillée avec quantités"
+      }
+    }
+  ]
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': profile.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 3000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content[0].text.replace(/```json|```/g, '').trim();
+    const plan = JSON.parse(text);
+    renderPlan(plan.days);
+  } catch(e) {
+    cards.innerHTML = `<div class="empty-state"><div>Erreur : ${e.message}<br>Vérifie ta clé API dans Profil.</div></div>`;
+  }
+
+  btn.disabled = false;
+  loading.classList.remove('active');
+}
+
+function renderPlan(days) {
+  const el = document.getElementById('day-cards');
+  el.innerHTML = days.map(day => `
+    <div class="day-card" onclick="this.classList.toggle('open')">
+      <div class="day-card-header">
+        <div>
+          <div class="day-name">${day.name}</div>
+          <div class="macro-row-small">
+            <span class="mpill p">P: ${day.p}g</span>
+            <span class="mpill g">G: ${day.g}g</span>
+            <span class="mpill l">L: ${day.l}g</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="day-kcal">${day.kcal} kcal</div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="day-content">
+        ${Object.entries(day.meals).map(([k, v]) => `
+          <div class="meal-block">
+            <div class="meal-block-title">${k.replace('_', ' ')}</div>
+            <div>${v}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== COACH CHAT ==========
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function sendChip(el) {
+  document.getElementById('chat-input').value = el.textContent;
+  sendMessage();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  if (!profile.apiKey) { showToast('Ajoute ta clé API dans Profil !'); return; }
+
+  input.value = '';
+  appendMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  const current = weightLog.length > 0 ? weightLog[weightLog.length - 1].w : profile.weight;
+  const lost = (profile.startWeight - current).toFixed(1);
+  const tdee = calcTDEE();
+
+  const systemPrompt = `Tu es un coach nutrition bienveillant et motivant. Voici le profil de l'utilisateur :
+- ${profile.age} ans, ${profile.height}cm, ${current}kg actuel (départ: ${profile.startWeight}kg)
+- A déjà perdu ${lost}kg, objectif: ${profile.goal}kg pour le ${profile.targetDate}
+- TDEE: ${tdee} kcal, cible: ${tdee - profile.deficit} kcal/jour
+- Masse grasse: ~${profile.bf}%
+Réponds en français, de façon concise (3-5 phrases max sauf si recette demandée), motivante et pratique.`;
+
+  const typingId = appendMsg('assistant', '…', true);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': profile.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, system: systemPrompt, messages: chatHistory })
+    });
+    const data = await res.json();
+    const reply = data.content[0].text;
+    chatHistory.push({ role: 'assistant', content: reply });
+    updateMsg(typingId, reply);
+  } catch(e) {
+    updateMsg(typingId, 'Erreur de connexion. Vérifie ta clé API.');
+  }
+}
+
+let msgId = 0;
+function appendMsg(role, text, isTyping = false) {
+  const id = 'msg-' + (++msgId);
+  const container = document.getElementById('chat-container');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.id = id;
+  div.innerHTML = `<div class="msg-label">${role === 'user' ? 'Toi' : 'Coach IA'}</div>${isTyping ? '<span class="loading-text">…</span>' : escapeHtml(text)}`;
+  container.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return id;
+}
+
+function updateMsg(id, text) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.innerHTML = `<div class="msg-label">Coach IA</div>${escapeHtml(text).replace(/\n/g, '<br>')}`;
+    el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ========== UTILS ==========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
